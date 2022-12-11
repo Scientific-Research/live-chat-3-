@@ -1,5 +1,4 @@
 const express = require("express");
-const { PromiseProvider } = require("mongoose");
 const app = express();
 
 const PORT = process.env.PORT || 5000;
