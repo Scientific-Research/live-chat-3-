@@ -38,7 +38,7 @@ const Login = () => {
               <span>
                 {" "}
                 <Link to="/messenger/register">
-                  Don't have any Accounts{" "}
+                  Don't have any Accountspoiopiopiop{" "}
                 </Link>{" "}
               </span>
             </div>
