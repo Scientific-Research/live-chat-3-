@@ -5,9 +5,10 @@ const registerModel = require("../models/authModel");
 const path = require("path");
 const fs = require("fs");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 module.exports.userRegister = (req, res) => {
-  console.log("Registration is working.");
+  // console.log("Registration is working.");
   // console.log(res.fields);
   const form = formidable();
 
@@ -62,8 +63,8 @@ module.exports.userRegister = (req, res) => {
       const randomNumber = Math.floor(Math.random() * 99999);
       const newImageName = randomNumber + getImageName;
       files.image.originalFilename = newImageName;
-      console.log(getImageName);
-      console.log(newImageName);
+      // console.log(getImageName);
+      // console.log(newImageName);
 
       // const newPath =
       //   __dirname +
@@ -75,9 +76,6 @@ module.exports.userRegister = (req, res) => {
       const newPath = path.join(
         `/home/user/assignments/live-chat(3)/frontend/public/images/${files.image.originalFilename}`
       );
-      //   // `../../../frontend/public/images/${files.image.originalFilename}`
-      //   // `../../../../frontend/public/images/${files.image.originalFilename}`
-      // );
 
       try {
         const checkUser = await registerModel.findOne({
@@ -99,6 +97,35 @@ module.exports.userRegister = (req, res) => {
                 image: files.image.originalFilename,
               });
               console.log("Registration completed in Data Bank successfully.");
+              const token = jwt.sign(
+                {
+                  id: userCreate._id,
+                  email: userCreate.email,
+                  userName: userCreate.userName,
+                  image: userCreate.image,
+                  registerTime: userCreate.createdAt,
+                },
+                process.env.SECRET,
+                {
+                  expiresIn: process.env.TOKEN_EXP,
+                }
+              );
+              const options = {
+                expires: new Date(
+                  Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
+                ),
+              };
+
+              res.status(201).cookie("authToken", token, options).json({
+                successMessage: "Your Token Registered Successfully",
+                token,
+              });
+            } else {
+              res.status(500).json({
+                error: {
+                  errorMessage: ["Internal Server Error"],
+                },
+              });
             }
           });
         }
@@ -110,5 +137,5 @@ module.exports.userRegister = (req, res) => {
         });
       }
     }
-  }); // end of formidable
+  }); // end Formidable
 };
