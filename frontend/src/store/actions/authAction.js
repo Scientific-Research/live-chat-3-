@@ -4,7 +4,7 @@ export const userRegister = (data) => {
   return async (dispatch) => {
     const config = {
       headers: {
-        "content-Type": "application/json",
+        "content-Type": "application/javascript",
       },
     };
     try {
