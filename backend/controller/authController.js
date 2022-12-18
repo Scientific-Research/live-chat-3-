@@ -117,7 +117,8 @@ module.exports.userRegister = (req, res) => {
               };
 
               res.status(201).cookie("authToken", token, options).json({
-                successMessage: "Your Token Registered Successfully",
+                // successMessage: "Your Token Registered Successfully",
+                successMessage: "Your Registration Successful",
                 token,
               });
             } else {
