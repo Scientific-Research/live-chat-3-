@@ -1,4 +1,3 @@
-const { response } = require("express");
 const formidable = require("formidable");
 const validator = require("validator");
 const registerModel = require("../models/authModel");
@@ -139,4 +138,96 @@ module.exports.userRegister = (req, res) => {
       }
     }
   }); // end Formidable
+};
+
+//User-Login
+module.exports.userLogin = async (req, res) => {
+  // console.log("This is from userLogin in authController.js!");
+  //   console.log(req.body);
+  const error = [];
+  const { email, password } = req.body;
+  if (!email) {
+    error.push("Please Provide your Email");
+  }
+  if (!password) {
+    error.push("Please Provide your Password");
+  }
+  if (email && !validator.isEmail(email)) {
+    error.push("Please provide your valid email");
+  }
+  if (error.length > 0) {
+    res.status(400).json({
+      error: {
+        errorMessage: error,
+      },
+    });
+  } else {
+    try {
+      //findOne findet alle Informationen wie id, image, password, email, ... für die eingegebene E-Mail.
+      const checkUser = await registerModel
+        .findOne({
+          email: email,
+        })
+        .select("+password");
+      //wenn ich auskommentiere, zeigt mir das Passwort nicht mehr, sonst zeigt mir das Passwort.
+      // oder ich kann direkt in authModel.js, ins Passwort bereich, select = false mache, dann zeigt mir das Passwort nicht mehr,
+      // aber wenn ich select=true auswähle, werde es mir das Passwort in terminal zeigen.
+      //Sowieso ohne diese .select("+password") kann ich auch mit select=true oder select=false, es verstecken oder zeigen.
+      console.log(checkUser);
+      if (checkUser) {
+        const matchPassword = await bcrypt.compare(
+          password,
+          checkUser.password
+        );
+        if (matchPassword) {
+          const token = jwt.sign(
+            {
+              id: checkUser._id,
+              email: checkUser.email,
+              userName: checkUser.userName,
+              image: checkUser.image,
+              registerTime: checkUser.createdAt,
+            },
+            process.env.SECRET,
+            {
+              expiresIn: process.env.TOKEN_EXP,
+            }
+          );
+          const options = {
+            expires: new Date(
+              Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
+            ),
+          };
+
+          res.status(200).cookie("authToken", token, options).json({
+            // successMessage: "Your Token for Login Registered Successfully",
+            successMessage: "Your Login Successful!", // zeigt uns in Postman
+            token,
+          });
+          console.log("Your Login Successful!"); // zeigt uns in Terminal
+        } else {
+          res.status(400).json({
+            error: {
+              errorMessage: ["Your Password not valid!"], // zeigt uns in Postman
+            },
+          });
+          console.log("Your Password not valid!"); // zeigt uns in Terminal
+        }
+      } else {
+        res.status(400).json({
+          error: {
+            errorMessage: ["Your Email not found!"], // zeigt uns in Postman
+          },
+        });
+        console.log("Your Email not found!"); // zeigt uns in Terminal
+      }
+    } catch {
+      res.status(404).json({
+        error: {
+          errorMessage: ["Internal Server Error!"], // zeigt uns in Postman
+        },
+      });
+      console.log("Internal Server Error!"); // zeigt uns in Terminal
+    }
+  }
 };

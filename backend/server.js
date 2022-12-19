@@ -3,10 +3,15 @@ const app = express();
 const dotenv = require("dotenv");
 const databaseConnect = require("./config/database");
 const authRouter = require("./routes/authRoute");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 dotenv.config({
   path: "backend/config/config.env",
 });
+
+app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use("/api/messenger", authRouter);
 const PORT = process.env.PORT || 5000;

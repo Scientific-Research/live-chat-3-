@@ -7,14 +7,14 @@ import { useAlert } from "react-alert";
 import { ERROR_CLEAR, SUCCESS_MESSAGE_CLEAR } from "../store/types/authType";
 
 const Register = () => {
-  const navigate = useNavigate();
   const alert = useAlert();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { loading, authenticate, error, successMessage, myInfo } = useSelector(
     (state) => state.auth
   );
   console.log(myInfo);
-  const dispatch = useDispatch();
 
   const [state, setState] = useState({
     userName: "",
@@ -47,9 +47,8 @@ const Register = () => {
   };
 
   const register = (e) => {
-    const { userName, email, password, confirmPassword, image } = state;
-
     e.preventDefault();
+    const { userName, email, password, confirmPassword, image } = state;
 
     const formData = new FormData();
     formData.append("userName", userName);
