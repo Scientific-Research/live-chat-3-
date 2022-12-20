@@ -50,3 +50,31 @@ module.exports.messageUploadDB = async (req, res) => {
   // console.log(req.body);
   // console.log(senderId);
 };
+
+module.exports.messageGet = async (req, res) => {
+  const myId = req.myId; // current Id of  the logged in user.
+  const fdId = req.params.id;
+  // console.log(myId);
+  // console.log(fdId); // id of the selected Person, whom i  write the message.
+
+  try {
+    let getAllMessage = await messageModel.find({});
+    // console.log(getAllMessage);
+    getAllMessage = getAllMessage.filter(
+      (m) =>
+        (m.senderId === myId && m.receiverId === fdId) ||
+        (m.receiverId === myId && m.senderId === fdId)
+    );
+    res.status(200).json({
+      success: true,
+      message: getAllMessage,
+    });
+    console.log(getAllMessage);
+  } catch (error) {
+    res.status(500).json({
+      error: {
+        errorMessage: "Internal Sever Error",
+      },
+    });
+  }
+};
