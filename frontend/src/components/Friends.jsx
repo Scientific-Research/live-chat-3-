@@ -1,12 +1,12 @@
 import React from "react";
 
-const Friends = () => {
+const Friends = ({ friend }) => {
   return (
     <div className="friend">
       <div className="friend-image">
         <div className="image">
           <img
-            src="/images/29143Miriam.jpg"
+            src={`./images/${friend.image}`}
             // width="1000px"
             // height="1000px"
             alt=""
@@ -15,7 +15,7 @@ const Friends = () => {
       </div>
       <div className="friend-name-seen">
         <div className="friend-name">
-          <h4>Miriam</h4>
+          <h4>{friend.userName}</h4>
         </div>
       </div>
     </div>

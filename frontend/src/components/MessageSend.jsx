@@ -77,8 +77,8 @@ const MessageSend = () => {
       <div className="file">💓</div>
       <div className="emoji-section">
         <div className="emoji">
-          {emojis.map((e) => (
-            <span>{e}</span>
+          {emojis.map((e, i) => (
+            <span key={i}>{e}</span>
           ))}
         </div>
       </div>

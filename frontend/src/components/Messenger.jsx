@@ -3,8 +3,20 @@ import { FaEdit, FaEllipsisH, FaSistrix } from "react-icons/fa";
 import ActiveFriend from "./ActiveFriend";
 import Friends from "./Friends";
 import RightSide from "./RightSide";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getFriends } from "../store/actions/messengerAction";
 
 const Messenger = () => {
+  const { friends } = useSelector((state) => state.messenger);
+  console.log(friends);
+  const { myInfo } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getFriends());
+  }, [dispatch]);
+
   return (
     <div className="messenger">
       <div className="row">
@@ -14,14 +26,14 @@ const Messenger = () => {
               <div className="image-name">
                 <div className="image">
                   <img
-                    src="/images/Stefan.jpg"
+                    src={`./images/${myInfo.image}`}
                     // width="1000px"
                     // height="1000px"
                     alt=""
                   />
                 </div>
                 <div className="name">
-                  <h3>Stefan</h3>
+                  <h3>{myInfo.userName}</h3>
                 </div>
               </div>
               <div className="icons">
@@ -49,57 +61,13 @@ const Messenger = () => {
               <ActiveFriend />
             </div>
             <div className="friends">
-              <div className="hover-friend active">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
-
-              <div className="hover-friend">
-                <Friends />
-              </div>
+              {friends && friends.length > 0
+                ? friends.map((fd, i) => (
+                    <div key={i} className="hover-friend">
+                      <Friends friend={fd} />
+                    </div>
+                  ))
+                : "No Friend"}
             </div>
           </div>
         </div>
