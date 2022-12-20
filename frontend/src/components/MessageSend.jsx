@@ -9,7 +9,9 @@ import {
   FaSistrix,
 } from "react-icons/fa";
 
-const MessageSend = () => {
+const MessageSend = (props) => {
+  const { inputHandle, newMessage, sendMessage } = props;
+
   const emojis = [
     "😀",
     "😚",
@@ -62,10 +64,12 @@ const MessageSend = () => {
       <div className="message-type">
         <input
           type="text"
+          onChange={inputHandle}
           name="message"
           id="message"
           placeholder="Aa"
           className="form-control"
+          value={newMessage}
         />
         <div className="file hover-gift">
           <label htmlFor="emoji">
@@ -74,7 +78,10 @@ const MessageSend = () => {
         </div>
       </div>
 
-      <div className="file">💓</div>
+      <div onClick={sendMessage} className="file">
+        💓
+      </div>
+
       <div className="emoji-section">
         <div className="emoji">
           {emojis.map((e, i) => (

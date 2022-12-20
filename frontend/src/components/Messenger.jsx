@@ -1,21 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaEdit, FaEllipsisH, FaSistrix } from "react-icons/fa";
 import ActiveFriend from "./ActiveFriend";
 import Friends from "./Friends";
 import RightSide from "./RightSide";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
 import { getFriends } from "../store/actions/messengerAction";
 
 const Messenger = () => {
+  const [currentFriend, setCurrentFriend] = useState("");
+  // console.log(currentFriend);
+  const [newMessage, setNewMessage] = useState("");
+
+  const inputHandle = (e) => {
+    setNewMessage(e.target.value);
+  };
+
+  // console.log(newMessage);
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+    console.log(newMessage);
+  };
+
   const { friends } = useSelector((state) => state.messenger);
-  console.log(friends);
+  // console.log(friends);
   const { myInfo } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFriends());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (friends && friends.length > 0) {
+      setCurrentFriend(friends[0]);
+    }
+  }, [dispatch, friends]);
 
   return (
     <div className="messenger">
@@ -63,7 +83,11 @@ const Messenger = () => {
             <div className="friends">
               {friends && friends.length > 0
                 ? friends.map((fd, i) => (
-                    <div key={i} className="hover-friend">
+                    <div
+                      onClick={() => setCurrentFriend(fd)}
+                      key={i}
+                      className="hover-friend"
+                    >
                       <Friends friend={fd} />
                     </div>
                   ))
@@ -71,7 +95,16 @@ const Messenger = () => {
             </div>
           </div>
         </div>
-        <RightSide />
+        {currentFriend ? (
+          <RightSide
+            currentFriend={currentFriend}
+            inputHandle={inputHandle}
+            newMessage={newMessage}
+            sendMessage={sendMessage}
+          />
+        ) : (
+          "Please select your friend"
+        )}
       </div>
     </div>
   );

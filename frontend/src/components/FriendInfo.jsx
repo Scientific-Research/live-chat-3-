@@ -1,14 +1,15 @@
 import React from "react";
 import { FaCaretSquareDown } from "react-icons/fa";
 
-const FriendInfo = (myInfo) => {
+const FriendInfo = (props) => {
+  const { currentFriend } = props;
   return (
     <div className="friend-info">
       <input type="checkbox" id="gallery" />
       <div className="image-name">
         <div className="image">
           <img
-            src={`./images/${myInfo.image}`}
+            src={`./images/${currentFriend.image}`}
             // width="1000px"
             // height="1000px"
             alt=""
@@ -17,7 +18,7 @@ const FriendInfo = (myInfo) => {
         <div className="active-user">Active</div>
 
         <div className="name">
-          <h4>{myInfo.userName}</h4>
+          <h4>{currentFriend.userName}</h4>
         </div>
       </div>
       <div className="others">

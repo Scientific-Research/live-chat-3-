@@ -12,11 +12,13 @@ import FriendInfo from "./FriendInfo";
 import Message from "./Message";
 import MessageSend from "./MessageSend";
 
-const RightSide = () => {
+const RightSide = (props) => {
+  const { currentFriend, inputHandle, newMessage, sendMessage } = props;
+  // console.log(currentFriend);
   return (
     <div className="col-9">
       <div className="right-side">
-      <input type="checkbox" id="dot" />
+        <input type="checkbox" id="dot" />
         <div className="row">
           <div className="col-8">
             <div className="message-send-show">
@@ -24,14 +26,14 @@ const RightSide = () => {
                 <div className="image-name">
                   <div className="image">
                     <img
-                      src="/images/29143Miriam.jpg"
+                      src={`./images/${currentFriend.image}`}
                       // width="1000px"
                       // height="1000px"
                       alt=""
                     />
                   </div>
                   <div className="name">
-                    <h3>Miriam</h3>
+                    <h3>{currentFriend.userName}</h3>
                   </div>
                 </div>
                 <div className="icons">
@@ -51,12 +53,16 @@ const RightSide = () => {
                 </div>
               </div>
               <Message />
-              <MessageSend />
+              <MessageSend
+                inputHandle={inputHandle}
+                newMessage={newMessage}
+                sendMessage={sendMessage}
+              />
             </div>
           </div>
 
           <div className="col-4">
-            <FriendInfo />
+            <FriendInfo currentFriend={currentFriend} />
           </div>
         </div>
       </div>
