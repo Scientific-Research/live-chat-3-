@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 
 const MessageSend = (props) => {
-  const { inputHandle, newMessage, sendMessage } = props;
+  const { inputHandle, newMessage, sendMessage, emojiSend, ImageSend } = props;
 
   const emojis = [
     "😀",
@@ -18,16 +18,13 @@ const MessageSend = (props) => {
     "😄",
     "😁",
     "😆",
-    "😘",
     "😂",
     "🤣",
     "😊",
-    "💋",
     "🙂",
     "🙃",
     "😉",
     "😌",
-    "😍",
     "😝",
     "😜",
     "🧐",
@@ -37,6 +34,9 @@ const MessageSend = (props) => {
     "🤑",
     "🥴",
     "😱",
+    "😍",
+    "💋",
+    "😘",
     "💖",
     "💝",
     "💞",
@@ -52,6 +52,12 @@ const MessageSend = (props) => {
       </div>
       <div className="file hover-image">
         <div className="add-image">Add Image</div>
+        <input
+          onChange={ImageSend}
+          type="file"
+          id="pic"
+          className="form-control"
+        />
         <label htmlFor="pic">
           <FaFileImage />
         </label>
@@ -85,7 +91,9 @@ const MessageSend = (props) => {
       <div className="emoji-section">
         <div className="emoji">
           {emojis.map((e, i) => (
-            <span key={i}>{e}</span>
+            <span key={i} onClick={() => emojiSend(e)}>
+              {e}
+            </span>
           ))}
         </div>
       </div>

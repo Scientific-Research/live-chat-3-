@@ -8,6 +8,7 @@ import {
   getFriends,
   messageSend,
   getMessage,
+  imageMessageSend
 } from "../store/actions/messengerAction";
 
 const Messenger = () => {
@@ -56,6 +57,29 @@ const Messenger = () => {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [message]);
+
+  const emojiSend = (emu) => {
+    setNewMessage(`${newMessage}` + emu);
+    // setNewMessage(emu);
+    // console.log(emu);
+  };
+
+  const ImageSend = (e) => {
+    if (e.target.files.length !== 0) {
+      const imageName = e.target.files[0].name;
+      const newImageName = Date.now() + imageName;
+
+      const formData = new FormData();
+      formData.append("senderName", myInfo.userName);
+      formData.append("imageName", newImageName);
+      formData.append("receiverId", currentFriend._id);
+      formData.append("image", e.target.files[0]);
+      dispatch(imageMessageSend(formData));
+      // console.log(newImageName);
+      // console.log(Date.now());
+    }
+    // console.log(e.target.files[0]);
+  };
 
   return (
     <div className="messenger">
@@ -127,6 +151,8 @@ const Messenger = () => {
             sendMessage={sendMessage}
             message={message}
             scrollRef={scrollRef}
+            emojiSend={emojiSend}
+            ImageSend={ImageSend}
           />
         ) : (
           "Please select your friend"
