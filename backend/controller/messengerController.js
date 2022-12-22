@@ -4,18 +4,75 @@ const messageModel = require("../models/messageModel");
 const path = require("path");
 const fs = require("fs");
 
+const getLastMessage = async (myId, fdId) => {
+  const msg = await messageModel
+    .findOne({
+      $or: [
+        {
+          $and: [
+            {
+              senderId: {
+                $eq: myId,
+              },
+            },
+            {
+              receiverId: {
+                $eq: fdId,
+              },
+            },
+          ],
+        },
+        {
+          $and: [
+            {
+              receiverId: {
+                $eq: myId,
+              },
+            },
+            {
+              senderId: {
+                $eq: fdId,
+              },
+            },
+          ],
+        },
+      ],
+    })
+    .sort({
+      updatedAt: -1,
+    });
+  return msg;
+};
 module.exports.getFriends = async (req, res) => {
   //   console.log(
   //     "This is a message from messenger Controller-everything till here works fine."
   //   );
   const myId = req.myId;
   // console.log("Your Id in Database:" + myId);
-
+  let fnd_msg = [];
   try {
-    const friendGet = await User.find({});
+    const friendGet = await User.find({
+      // MongoDB queries:
+      _id: {
+        $ne: myId, //(ne: not equal) this MongoDB command is equal with: const filter = friendGet.filter((d) => d.id !== myId);
+      },
+    });
+    for (let i = 0; i < friendGet.length; i++) {
+      let lmsg = await getLastMessage(myId, friendGet[i].id);
+      fnd_msg = [
+        ...fnd_msg,
+        {
+          fndInfo: friendGet[i],
+          msgInfo: lmsg,
+        },
+      ];
+      console.log(fnd_msg);
+    }
+    // console.log(friendGet);
     // console.log(friendGet); //show us all the people in the Database in Terminal,when we just refresh the Page.
-    const filter = friendGet.filter((friend) => friend.id !== myId);
-    res.status(200).json({ success: true, friends: filter });
+    // filter: it filters the person who is online and shows other people than this person in the list.
+    // const filter = friendGet.filter((d) => d.id !== myId);
+    res.status(200).json({ success: true, friends: fnd_msg });
   } catch (error) {
     res.status(500).json({
       error: {
@@ -61,18 +118,51 @@ module.exports.messageGet = async (req, res) => {
   // console.log(fdId); // id of the selected Person, whom i  write the message.
 
   try {
-    let getAllMessage = await messageModel.find({});
+    let getAllMessage = await messageModel.find({
+      //MongoDB queries:
+      $or: [
+        {
+          $and: [
+            {
+              senderId: {
+                $eq: myId,
+              },
+            },
+            {
+              receiverId: {
+                $eq: fdId,
+              },
+            },
+          ],
+        },
+        {
+          $and: [
+            {
+              receiverId: {
+                $eq: myId,
+              },
+            },
+            {
+              senderId: {
+                $eq: fdId,
+              },
+            },
+          ],
+        },
+      ],
+    });
     // console.log(getAllMessage);
-    getAllMessage = getAllMessage.filter(
-      (m) =>
-        (m.senderId === myId && m.receiverId === fdId) ||
-        (m.receiverId === myId && m.senderId === fdId)
-    );
+    // I made it as comment because we have the same concept above using MONGODB Queries.
+    // getAllMessage = getAllMessage.filter(
+    //   (m) =>
+    //     (m.senderId === myId && m.receiverId === fdId) ||
+    //     (m.receiverId === myId && m.senderId === fdId)
+    // );
     res.status(200).json({
       success: true,
       message: getAllMessage,
     });
-    console.log(getAllMessage);
+    // console.log(getAllMessage);
   } catch (error) {
     res.status(500).json({
       error: {
