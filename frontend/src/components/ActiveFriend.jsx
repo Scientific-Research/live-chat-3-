@@ -1,124 +1,21 @@
 import React from "react";
 
-const ActiveFriend = () => {
+const ActiveFriend = ({ user, setCurrentFriend }) => {
   return (
-    <div className="active-friend">
+    <div
+      onClick={() =>
+        setCurrentFriend({
+          _id: user.userInfo.id,
+          email: user.userInfo.email,
+          image: user.userInfo.image,
+          userName: user.userInfo.userName,
+        })
+      }
+      className="active-friend"
+    >
       <div className="image-active-icon">
         <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>{" "}
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>{" "}
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
-          <div className="active-icon"></div>
-        </div>
-        <div className="image">
-          <img
-            src="/images/29143Miriam.jpg"
-            width="1000px"
-            height="1000px"
-            alt=""
-          />
+          <img src={`./images/${user.userInfo.image}`} alt="" />
           <div className="active-icon"></div>
         </div>
       </div>

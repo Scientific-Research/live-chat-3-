@@ -8,15 +8,64 @@ import {
   getFriends,
   messageSend,
   getMessage,
-  imageMessageSend
+  imageMessageSend,
 } from "../store/actions/messengerAction";
+import { io } from "socket.io-client";
 
 const Messenger = () => {
   const scrollRef = useRef();
+  const socket = useRef();
+  const dispatch = useDispatch();
+
+  const { friends, message } = useSelector((state) => state.messenger);
+  const { myInfo } = useSelector((state) => state.auth);
 
   const [currentFriend, setCurrentFriend] = useState("");
-  // console.log(currentFriend);
   const [newMessage, setNewMessage] = useState("");
+
+  const [activeUser, setActiveUser] = useState([]);
+  const [socketMessage, setSocketMessage] = useState("");
+
+  // console.log(currentFriend);
+  // console.log(socket);
+  useEffect(() => {
+    socket.current = io("ws://localhost:8000");
+    socket.current.on("getMessage", (data) => {
+      console.log(data);
+      setSocketMessage(data);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (socketMessage && currentFriend) {
+      if (
+        socketMessage.senderId === currentFriend._id &&
+        socketMessage.receiverId === myInfo.id
+      ) {
+        dispatch({
+          type: "SOCKET_MESSAGE",
+          payload: {
+            message: socketMessage,
+          },
+        });
+      }
+    }
+    setSocketMessage("");
+  }, [currentFriend, dispatch, myInfo, myInfo.id, socketMessage]);
+
+  useEffect(() => {
+    socket.current.emit("addUser", myInfo.id, myInfo);
+  }, [myInfo, myInfo.id]);
+
+  useEffect(() => {
+    socket.current.on("getUser", (users) => {
+      const filterUser = users.filter((u) => u.userId !== myInfo.id);
+      // console.log(users);
+      setActiveUser(filterUser);
+    });
+  }, [myInfo.id]);
+
+  // console.log(currentFriend);
 
   const inputHandle = (e) => {
     setNewMessage(e.target.value);
@@ -31,15 +80,25 @@ const Messenger = () => {
       receiverId: currentFriend._id,
       message: newMessage ? newMessage : "💓",
     };
+    socket.current.emit("sendMessage", {
+      senderId: myInfo.id,
+      senderName: myInfo.userName,
+      receiverId: currentFriend._id,
+      time: new Date(),
+      message: {
+        text: newMessage ? newMessage : "💓",
+        image: "",
+        // image: newMessage.image,
+        // image: message.image,
+      },
+    });
     dispatch(messageSend(data));
-    console.log(newMessage);
+    setNewMessage("");
+    // console.log(newMessage);
   };
 
-  const { friends, message } = useSelector((state) => state.messenger);
   // console.log(friends);
-  const { myInfo } = useSelector((state) => state.auth);
 
-  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFriends());
   }, [dispatch]);
@@ -122,7 +181,14 @@ const Messenger = () => {
               </div>
             </div>
             <div className="active-friends">
-              <ActiveFriend />
+              {activeUser && activeUser.length > 0
+                ? activeUser.map((u) => (
+                    <ActiveFriend
+                      setCurrentFriend={setCurrentFriend}
+                      user={u}
+                    />
+                  ))
+                : ""}
             </div>
             <div className="friends">
               {friends && friends.length > 0
@@ -153,6 +219,7 @@ const Messenger = () => {
             scrollRef={scrollRef}
             emojiSend={emojiSend}
             ImageSend={ImageSend}
+            activeUser={activeUser}
           />
         ) : (
           "Please select your friend"
