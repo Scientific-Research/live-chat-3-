@@ -23,6 +23,7 @@ const RightSide = (props) => {
     emojiSend,
     ImageSend,
     activeUser,
+    typingMessage
   } = props;
   // console.log(currentFriend);
   return (
@@ -73,6 +74,7 @@ const RightSide = (props) => {
                 message={message}
                 currentFriend={currentFriend}
                 scrollRef={scrollRef}
+                typingMessage = {typingMessage}
               />
               <MessageSend
                 inputHandle={inputHandle}
